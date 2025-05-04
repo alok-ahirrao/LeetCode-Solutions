@@ -1,4 +1,9 @@
 class Solution:
     def numEquivDominoPairs(self, dominoes: List[List[int]]) -> int:
-        return sum(f*(f-1)//2 for f in Counter(min(d0*10+d1, d1*10+d0) for d0, d1 in dominoes).values())
-        
+        seen = [0] * 100
+        equal_pairs = 0
+        for a, b in dominoes:
+            val = a * 10 + b if a <= b else b * 10 + a
+            equal_pairs += seen[val]
+            seen[val] += 1
+        return equal_pairs
