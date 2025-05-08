@@ -1,22 +1,32 @@
-import heapq
-
 class Solution:
-    def minTimeToReach(self, moveTime):
-        n, m = len(moveTime), len(moveTime[0])
-        vis = [[False] * m for _ in range(n)]
-        heap = [(0, 0, 0, 0)]  # (time, moves, row, col)
-        vis[0][0] = True
-        dirs = [(0,1), (1,0), (-1,0), (0,-1)]
+    def minTimeToReach(self, t: List[List[int]]) -> int:
+        n, m = len(t), len(t[0])
+        dp = [[[float('inf')] * 2 for _ in range(m)] for _ in range(n)]
+        dp[0][0][0] = 0
 
-        while heap:
-            time, moves, r, c = heapq.heappop(heap)
-            if r == n - 1 and c == m - 1:
-                return time
-            for dr, dc in dirs:
-                nr, nc = r + dr, c + dc
-                if 0 <= nr < n and 0 <= nc < m and not vis[nr][nc]:
-                    vis[nr][nc] = True
-                    wait = max(time, moveTime[nr][nc])
-                    travel_time = 1 if moves % 2 == 0 else 2
-                    heapq.heappush(heap, (wait + travel_time, moves + 1, nr, nc))
+        from heapq import heappush, heappop
+        pq = [(0, 0, 0, 0)]  # (time, x, y, parity)
+        directions = [(-1,0), (1,0), (0,-1), (0,1)]
+
+        while pq:
+            time, x, y, parity = heappop(pq)
+            if dp[x][y][parity] < time:
+                continue
+
+            for dx, dy in directions:
+                nx, ny = x + dx, y + dy
+                if nx < 0 or ny < 0 or nx >= n or ny >= m:
+                    continue
+
+                wait_time = max(time, t[nx][ny])
+                next_parity = 1 - parity
+                next_time = wait_time + 1 + parity
+
+                if nx == n - 1 and ny == m - 1:
+                    return next_time
+
+                if next_time < dp[nx][ny][next_parity]:
+                    dp[nx][ny][next_parity] = next_time
+                    heappush(pq, (next_time, nx, ny, next_parity))
+
         return -1
