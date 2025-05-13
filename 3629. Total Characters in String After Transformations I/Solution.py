@@ -1,24 +1,11 @@
+dp = [1] * (100_000 + 26)
+for i in range(26, len(dp)):
+    dp[i] = (dp[i-26] + dp[i-25]) % 1_000_000_007
+
 class Solution:
     def lengthAfterTransformations(self, s: str, t: int) -> int:
-        MOD = 10**9 + 7
-        count = [0] * 26
-        
-        # Initialize count of each character in the string
-        for ch in s:
-            count[ord(ch) - ord('a')] += 1
-        
-        total_length = len(s)
-        
-        # Perform t transformations
-        for _ in range(t):
-            new_count = [0] * 26
-            for i in range(26):
-                if i == 25:  # 'z'
-                    new_count[0] = (new_count[0] + count[25]) % MOD  # 'a'
-                    new_count[1] = (new_count[1] + count[25]) % MOD  # 'b'
-                    total_length = (total_length + count[25]) % MOD
-                else:
-                    new_count[i + 1] = (new_count[i + 1] + count[i]) % MOD
-            count = new_count
-        
-        return total_length % MOD
+        ans = 0
+        cnt = Counter(s)
+        for k, v in cnt.items():
+            ans = (ans + v * dp[(ord(k) - 97) + t]) % 1_000_000_007
+        return ans
