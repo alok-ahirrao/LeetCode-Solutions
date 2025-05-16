@@ -1,39 +1,45 @@
+# https://www.youtube.com/@0x3f
 class Solution:
     def getWordsInLongestSubsequence(self, words: List[str], groups: List[int]) -> List[str]:
         n = len(words)
-        connections = {}
-        maxs = {}
-        result = []
-
-        def HammingDistance(base, word):
-            differences = 0
-            
-            if len(base) != len(word):
-                return -1
-            else:
-                for i in range(len(word)):
-                    if base[i] != word[i]: differences += 1
-                    if differences > 2: return -1
-            return differences
-
-        for i in range(n):
-            connections[i] = []
-            for k in range(i, n):
-                if groups[i] != groups[k] and HammingDistance(words[i], words[k]) == 1:
-                    connections[i].append(k)
-        
+        f_map = {}
+        from_ = [0] * n
+        global_max_f = max_i = 0
         for i in range(n - 1, -1, -1):
-            maxs[i] = []
+            w, g = words[i], groups[i]
+            hash_val = sum((ord(b) & 31) << (j * 6) for j, b in enumerate(w))
 
-            for connection in connections[i]:
-                if len(maxs[connection]) > len(maxs[i]):
-                    maxs[i] = maxs[connection]
-            
-            maxs[i] = [words[i]] + maxs[i]
-            if len(maxs[i]) > len(result):
-                result = maxs[i]
+            f = 0
+            for j in range(len(w)):
+                h = hash_val | (31 << (j * 6))
+                max_f, idx, max_f2, idx2 = f_map.get(h, (0, 0, 0, 0))
+                if g != groups[idx]:
+                    if max_f > f:
+                        f = max_f
+                        from_[i] = idx
+                else:
+                    if max_f2 > f:
+                        f = max_f2
+                        from_[i] = idx2
 
-        return result
-                    
+            f += 1
+            if f > global_max_f:
+                global_max_f, max_i = f, i
 
+            for j in range(len(w)):
+                h = hash_val | (31 << (j * 6))
+                max_f, idx, max_f2, idx2 = f_map.get(h, (0, 0, 0, 0))
+                if f > max_f:
+                    if g != groups[idx]:
+                        max_f2, idx2 = max_f, idx
+                    max_f, idx = f, i
+                elif f > max_f2 and g != groups[idx]:
+                    max_f2, idx2 = f, i
+                f_map[h] = (max_f, idx, max_f2, idx2)
 
+        ans = [''] * global_max_f
+        i = max_i
+        for k in range(global_max_f):
+            ans[k] = words[i]
+            i = from_[i]
+        return ans
