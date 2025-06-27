@@ -3,7 +3,7 @@
 <p align="left">
   <img src="https://komarev.com/ghpvc/?username=alok-ahirrao&label=Profile%20views&color=0e75b6&style=flat" alt="alok-ahirrao" style="float: left;"/>
   <span style="float: right; margin-left: 10px;">
-    <a href="https://www.linkedin.com/in/alokahirrao/" target="_blank"><img alt="LinkedIn" width="22" src="https://cdn.simpleicons.org/linkedin/white" /></a>
+    <a href="https://www.linkedin.com/in/alokahirrao/" target="_blank">  <img alt="LinkedIn" width="22" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/linkedin/linkedin-original.svg" /></a>
     <a href="https://github.com/alok-ahirrao" target="_blank"><img alt="Github" width="22" src="https://cdn.simpleicons.org/github/white" /></a>
     <a href="https://leetcode.com/u/Alok1108/" target="_blank"><img alt="LeetCode" width="22" src="https://cdn.simpleicons.org/leetcode/white" /></a>
     <a href="https://alokahirrao.netlify.app" target="_blank"><img alt="Resume" width="22" src="https://cdn-icons-png.freepik.com/256/942/942748.png?semt=ais_hybrid" /></a> 
@@ -21,7 +21,9 @@
 
 - 👨‍💻 **Projects**: Available on [LinkedIn](https://www.linkedin.com/in/alokahirrao/).
 
-- 📄 **Resume**: Available at [alokahirrao.netlify.app](https://alokahirrao.netlify.app).
+- 🗂️ **Portfolio**: Available at [alokahirrao.netlify.app](https://alokahirrao.netlify.app).
+
+- 📄 **Resume**: Available at [alok11.netlify.app](https://alok11.netlify.app).
 
 - 💬 **Ask Me About**: AI, ML, deep learning, and computer vision.
   
