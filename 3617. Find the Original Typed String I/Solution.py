@@ -2,9 +2,7 @@ class Solution:
     def possibleStringCount(self, word: str) -> int:
 
         stack = []
-
         ans = 1 
-
         for w in word:
             if not stack or (stack and w==stack[-1]):
                 stack.append(w)
