@@ -1,6 +1,5 @@
 class Solution:
     def possibleStringCount(self, word: str) -> int:
-
         stack = []
         ans = 1 
         for w in word:
@@ -9,10 +8,5 @@ class Solution:
             else:
                 ans+=len(stack)-1
                 stack = [w]
-            
-            #print(w,stack,ans)
-
         ans+=len(stack)-1
         return ans 
-
-        
