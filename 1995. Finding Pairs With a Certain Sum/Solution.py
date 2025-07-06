@@ -1,22 +1,21 @@
 class FindSumPairs:
+
     def __init__(self, nums1: List[int], nums2: List[int]):
-        self.nums1 = nums1
+        self.freq1 = Counter(nums1)
+        self.freq2 = Counter(nums2)
+        self.keys = sorted(self.freq1.keys())
         self.nums2 = nums2
-        self.freq = Counter(nums2)
 
     def add(self, index: int, val: int) -> None:
-        self.freq[self.nums2[index]] -= 1  # Remove old one
+        self.freq2[self.nums2[index]] -= 1
         self.nums2[index] += val
-        self.freq[self.nums2[index]] += 1  # Count new one
+        self.freq2[self.nums2[index]] += 1
 
     def count(self, tot: int) -> int:
         ans = 0
-        for a in self.nums1:  
-            ans += self.freq[tot - a]  # a + b = tot -> b = tot - a
+        for num1 in self.keys:
+            if num1 >= tot:
+                break
+            if tot-num1 in self.freq2:
+                ans += self.freq1[num1] * self.freq2[tot-num1]
         return ans
-
-
-# Your FindSumPairs object will be instantiated and called as such:
-# obj = FindSumPairs(nums1, nums2)
-# obj.add(index,val)
-# param_2 = obj.count(tot)
