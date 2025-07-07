@@ -1,24 +1,19 @@
 class Solution:
     def maxEvents(self, events: List[List[int]]) -> int:
-        events.sort(key = lambda x: x[0])
-        
-        minHeap = []
-        d = events[0][0]
-        i = 0
-        res = 0
+        events.sort(key=lambda e: e[1])
 
-        while minHeap or i < len(events):
-            while i < len(events) and events[i][0] <= d:
-                _, e = events[i]
-                heapq.heappush(minHeap, e)
-                i += 1
+        mx = events[-1][1]
+        fa = list(range(mx + 2))
 
-            if minHeap:
-                e = heapq.heappop(minHeap)
-                if d > e:
-                    continue
-                d += 1
-                res += 1
-            else:
-                d = events[i][0]
-        return res
+        def find(x: int) -> int:
+            if fa[x] != x:
+                fa[x] = find(fa[x])
+            return fa[x]
+
+        ans = 0
+        for start_day, end_day in events:
+            x = find(start_day)
+            if x <= end_day:
+                ans += 1
+                fa[x] = x + 1
+        return ans
