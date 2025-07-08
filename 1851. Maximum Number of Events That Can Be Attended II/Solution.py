@@ -1,40 +1,24 @@
-from bisect import bisect_right
-
 class Solution:
-    def maxValue(self, events, k):
-        # Step 1: Sort events by end time
-        events.sort(key=lambda x: x[1])
-        n = len(events)
+    def maxValue(self, events: List[List[int]], k: int) -> int:
+        events,n=sorted(events, key=lambda e:e[1]), len(events)
+        events_start_sorted = sorted([(e[0], i) for i,e in enumerate(events)])
+        preceding,j = [-1]*n,0
+        for start, index in events_start_sorted:            
+            while events[j][1]<start:
+                j+=1
+            preceding[index]=j-1
 
-        # Step 2: Extract start times separately for binary search
-        start_times = [e[0] for e in events]
-
-        # Step 3: Initialize DP table
-        dp = [[0] * (k + 1) for _ in range(n + 1)]
-
-        # Step 4: Loop through each event
-        for i in range(1, n + 1):
-            start, end, value = events[i - 1]
-
-            # Step 5: Binary search for last non-overlapping event
-            prev = self.findLastNonOverlapping(events, i - 1, start)
-
-            for j in range(1, k + 1):
-                # Option 1: skip current event
-                # Option 2: take current event and add to prev best
-                dp[i][j] = max(dp[i - 1][j], dp[prev + 1][j - 1] + value)
-
-        # Step 6: Return final answer
-        return dp[n][k]
-
-    def findLastNonOverlapping(self, events, right, targetStart):
-        left = 0
-        res = -1
-        while left <= right:
-            mid = (left + right) // 2
-            if events[mid][1] < targetStart:
-                res = mid
-                left = mid + 1
-            else:
-                right = mid - 1
+        dp,res = [0]*n,0
+        for j in range(1, k+1):
+            max_value=-1
+            dp_next=[-1]*n            
+            for i in range(n):
+                if j==1:
+                    max_value=max(max_value, events[i][2])                    
+                elif preceding[i]>=0 and dp[preceding[i]]>=0:
+                    max_value=max(max_value, dp[preceding[i]]+events[i][2])
+                dp_next[i]=max_value                
+            dp=dp_next
+            res=max(res, max_value)
+        
         return res
