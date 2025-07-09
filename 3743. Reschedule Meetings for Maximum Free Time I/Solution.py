@@ -1,16 +1,6 @@
 class Solution:
-    def maxFreeTime(self, eventTime: int, k: int, startTime: list[int], endTime: list[int]) -> int:
-        n = len(startTime)
-        res = 0
-        sum_durations = [0] * (n + 1)
-
-        for i in range(n):
-            sum_durations[i + 1] = sum_durations[i] + endTime[i] - startTime[i]
-
-        for i in range(k - 1, n):
-            right = eventTime if i == n - 1 else startTime[i + 1]
-            left = 0 if i == k - 1 else endTime[i - k]
-            free_time = right - left - (sum_durations[i + 1] - sum_durations[i - k + 1])
-            res = max(res, free_time)
-
-        return res
+    def maxFreeTime(self, t: int, k: int, s: List[int], e: List[int]) -> int:
+        q = [*map(sub,s+[t],[0]+e)]
+        return max(accumulate(map(sub,q[k+1:],q),lambda p,w:p+w,initial=sum(q[:k+1])))
+        return max(accumulate(zip(q[k+1:],q),lambda p,w:p+w[0]-w[1],initial=sum(q[:k+1])))
+        return max(accumulate(range(k+1,len(q)),lambda p,i:p+q[i]-q[i-k-1],initial=sum(q[:k+1])))
