@@ -1,36 +1,44 @@
-from functools import lru_cache
+EXTREMES = [[[[1, 1] for second_i in range(first_i+1, n-first_i)] for first_i in range(n>>1)] for n in range(2, 29)]
+def get_from_0(n, first_i, second_i):
+    second_from_end = n - 1 - second_i
+    used_first_i = second_from_end if first_i > second_from_end else first_i
+    return EXTREMES[n-2][used_first_i][second_i-first_i-1]
+
+for n_i, per_size in enumerate(EXTREMES):
+    n = n_i + 2
+    old_n = (n + 1) >> 1
+    for first_i, per_first in enumerate(per_size):
+        for betweens in range(len(per_first)-1):
+            second_i = first_i + betweens + 1
+            second_complement_i = n - 1 - second_i
+            earliest_pre = n
+            latest_pre = 0
+            if second_i <= second_complement_i:
+                for keep1 in range(first_i+1):
+                    for keep2 in range(betweens+1):
+                        old_first_i = keep1
+                        old_second_i = old_first_i + keep2 + 1
+                        old_earliest, old_latest = get_from_0(old_n, old_first_i, old_second_i)
+                        if earliest_pre > old_earliest:
+                            earliest_pre = old_earliest
+                        if latest_pre < old_latest:
+                            latest_pre = old_latest
+            else:
+                must_keep = (second_i - second_complement_i - 1 + 1) >> 1
+                for keep1 in range(first_i+1):
+                    for keep2 in range(second_complement_i-first_i):
+                        old_first_i = keep1
+                        old_second_i = old_first_i + keep2 + must_keep + 1
+                        old_earliest, old_latest = get_from_0(old_n, old_first_i, old_second_i)
+                        if earliest_pre > old_earliest:
+                            earliest_pre = old_earliest
+                        if latest_pre < old_latest:
+                            latest_pre = old_latest
+            per_first[betweens][0] = earliest_pre + 1
+            per_first[betweens][1] = latest_pre + 1
 
 class Solution:
-    def earliestAndLatest(self, n: int, firstPlayer: int, secondPlayer: int) -> list[int]:
-        @lru_cache(None)
-        def dp(n, i, j):
-            if i + j == n + 1:
-                return (1, 1)
-            pairs = n // 2
-            other = []
-            for k in range(1, pairs + 1):
-                left, right = k, n - k + 1
-                if left != i and left != j and right != i and right != j:
-                    other.append((left, right))
-            mid = (n + 1) // 2
-            m = (n + 1) // 2
-            early, latest = float('inf'), 0
-            tot = len(other)
-            for mask in range(1 << tot):
-                surv = []
-                for idx, (left, right) in enumerate(other):
-                    if (mask >> idx) & 1:
-                        surv.append(right)
-                    else:
-                        surv.append(left)
-                surv.append(i)
-                surv.append(j)
-                if (n % 2 == 1) and mid != i and mid != j:
-                    surv.append(mid)
-                surv.sort()
-                e1, l1 = dp(m, surv.index(i) + 1, surv.index(j) + 1)
-                early = min(early, e1 + 1)
-                latest = max(latest, l1 + 1)
-            return (early, latest)
-            
-        return list(dp(n, firstPlayer, secondPlayer))
+    def earliestAndLatest(self, n: int, firstPlayer: int, secondPlayer: int) -> List[int]:
+        secondDistFromEnd = n + 1 - secondPlayer
+        usedFirstPlayer = secondDistFromEnd if firstPlayer > secondDistFromEnd else firstPlayer
+        return EXTREMES[n-2][usedFirstPlayer-1][secondPlayer-firstPlayer-1]
