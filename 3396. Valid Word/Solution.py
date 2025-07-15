@@ -10,5 +10,4 @@ class Solution:
             return False
         if not re.search(r'(?i)[b-df-hj-np-tv-z]', word):  
             return False
-
         return True
