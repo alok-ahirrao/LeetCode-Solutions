@@ -1,19 +1,14 @@
+import re
+
 class Solution:
-    def isValid(self, s: str) -> bool:
-        if len(s) < 3:
+    def isValid(self, word: str) -> bool:
+        if len(word) < 3:
+            return False
+        if not re.fullmatch(r'[A-Za-z0-9]+', word):
+            return False
+        if not re.search(r'[aeiouAEIOU]', word):
+            return False
+        if not re.search(r'(?i)[b-df-hj-np-tv-z]', word):  
             return False
 
-        vowels = 0
-        consonants = 0
-        vowel_set = "aeiouAEIOU"
-
-        for c in s:
-            if c.isalpha():
-                if c in vowel_set:
-                    vowels += 1
-                else:
-                    consonants += 1
-            elif not c.isdigit():
-                return False  # invalid character
-
-        return vowels >= 1 and consonants >= 1
+        return True
