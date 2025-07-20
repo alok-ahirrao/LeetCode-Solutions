@@ -1,50 +1,39 @@
-from collections import defaultdict
-
-class Node:
-    def __init__(self, name):
-        self.name = name
-        self.children = {}
-        self.signature = ""
-
 class Solution:
-    def deleteDuplicateFolder(self, paths):
-        root = Node("")
+    def deleteDuplicateFolder(self, paths: List[List[str]]) -> List[List[str]]:
+        tree = {}
         for path in paths:
-            node = root
+            node = tree
             for folder in path:
-                if folder not in node.children:
-                    node.children[folder] = Node(folder)
-                node = node.children[folder]
+                node = node.setdefault(folder, {})
         
-        signature_count = defaultdict(int)
+        duplicates = defaultdict(list)
+
+        def serialize(node):
+            if not node:
+                return "()"
+
+            child_s = "".join(child + serialize(child_node) for child, child_node in sorted(node.items()))
+
+            serial = "(" + child_s + ")"
+            duplicates[serial].append(node)
+            return serial
         
-        def dfs(node):
-            if not node.children:
-                node.signature = ""
-                return ""
-            child_signatures = []
-            for name, child in sorted(node.children.items()):
-                child_signature = dfs(child)
-                child_signatures.append(f"{name}({child_signature})")
-            node.signature = "".join(child_signatures)
-            signature_count[node.signature] += 1
-            return node.signature
+        serialize(tree)
+
+        for nodes in duplicates.values():
+            if len(nodes) > 1:
+                for node in nodes:
+                    node.clear()
+                    node["#"] = True
         
-        dfs(root)
+        ret = []
+        def collect_paths(node, path):
+            for child_name, child_node in node.items():
+                if "#" in child_node:
+                    continue
+                new_path = path + [child_name]
+                ret.append(new_path)
+                collect_paths(child_node, new_path)
         
-        result = []
-        current_path = []
-        
-        def dfs2(node):
-            if node.children and signature_count[node.signature] >= 2:
-                return
-            current_path.append(node.name)
-            result.append(current_path.copy())
-            for name, child in sorted(node.children.items()):
-                dfs2(child)
-            current_path.pop()
-        
-        for name, child in sorted(root.children.items()):
-            dfs2(child)
-        
-        return result
+        collect_paths(tree, [])
+        return ret
