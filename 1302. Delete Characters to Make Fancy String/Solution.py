@@ -1,8 +1,22 @@
 class Solution:
     def makeFancyString(self, s: str) -> str:
-        result = []
-        for c in s:
-            if len(result) >= 2 and result[-1] == c and result[-2] == c:
+        if len(s) < 3:
+            return s
+        
+        prev = s[0]
+        answer = []
+        answer.append(s[0])
+        flag = False
+        for c in s[1:]:
+            if prev != c:
+                prev = c
+                answer.append(c)
+                flag = False
                 continue
-            result.append(c)
-        return ''.join(result)
+            if flag is False:
+                answer.append(c)
+                flag = True
+        return "".join(answer)
+
+            
+        
