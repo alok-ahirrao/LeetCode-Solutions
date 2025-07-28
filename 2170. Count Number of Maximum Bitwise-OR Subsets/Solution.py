@@ -1,3 +1,7 @@
 class Solution:
-    def countMaxOrSubsets(self, a: List[int]) -> int:
-        return (f:=lambda i,o,O=reduce(or_,a):a[i:] and f(i+1,o)+f(i+1,o|a[i]) or o==O)(0,0)
+    def countMaxOrSubsets(self, nums: List[int]) -> int:
+        prevBits = Counter([0])
+        for num in nums:
+            for prev, count in list(prevBits.items()):
+                prevBits[prev | num] += count
+        return prevBits[reduce(lambda a,b: a | b, nums)]
