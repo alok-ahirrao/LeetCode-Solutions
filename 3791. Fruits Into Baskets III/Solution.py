@@ -1,64 +1,37 @@
-__import__("atexit").register(lambda: open("display_runtime.txt", "w").write("0"))
-class SegmentTree:
-    def __init__(self, data):
-        self.n = len(data)
-        # next power of two
-        size = 1
-        while size < self.n:
-            size <<= 1
-        self.size = size
-        self.tree = [0] * (2 * size)
-        # build leaves
-        for i, v in enumerate(data):
-            self.tree[size + i] = v
-        # build internal nodes
-        for i in range(size - 1, 0, -1):
-            self.tree[i] = max(self.tree[2*i], self.tree[2*i+1])
-
-    def update(self, idx, value):
-        # point update: set data[idx] = value
-        i = self.size + idx
-        self.tree[i] = value
-        i //= 2
-        while i:
-            self.tree[i] = max(self.tree[2*i], self.tree[2*i+1])
-            i //= 2
-
-    def find_first(self, node, node_lo, node_hi, fruit):
-        """
-        Finds the smallest index j in [node_lo, node_hi)
-        whose value >= fruit, or returns -1 if none.
-        """
-        if self.tree[node] < fruit:
-            return -1
-        if node_lo + 1 == node_hi:
-            # leaf
-            return node_lo
-        mid = (node_lo + node_hi) // 2
-        left_node = 2 * node
-        # try left child
-        if self.tree[left_node] >= fruit:
-            return self.find_first(left_node, node_lo, mid, fruit)
-        else:
-            return self.find_first(left_node + 1, mid, node_hi, fruit)
-
-    def query_first(self, fruit):
-        # API: search whole range [0, n)
-        return self.find_first(1, 0, self.size, fruit)
-
-
 class Solution:
-    def numOfUnplacedFruits(self, fruits: List[int], baskets: List[int]) -> int:
-        st = SegmentTree(baskets)
-        unplaced = 0
+    def numOfUnplacedFruits(self, fruits, baskets):
+        n = len(baskets)
+        self.seg = [0] * (4 * n)
+        self.build(baskets, 0, 0, n - 1)
 
+        unplaced = 0
         for fruit in fruits:
-            j = st.query_first(fruit)
-            if j == -1 or j >= len(baskets):
-                # no suitable basket
+            if self.seg[0] < fruit:
                 unplaced += 1
             else:
-                # place it and mark basket j as used
-                st.update(j, 0)
-
+                if not self.place(0, 0, n - 1, fruit):
+                    unplaced += 1
         return unplaced
+
+    def build(self, baskets, idx, l, r):
+        if l == r:
+            self.seg[idx] = baskets[l]
+            return self.seg[idx]
+        mid = (l + r) // 2
+        left = self.build(baskets, 2 * idx + 1, l, mid)
+        right = self.build(baskets, 2 * idx + 2, mid + 1, r)
+        self.seg[idx] = max(left, right)
+        return self.seg[idx]
+
+    def place(self, idx, l, r, val):
+        if self.seg[idx] < val:
+            return False
+        if l == r:
+            self.seg[idx] = -1
+            return True
+        mid = (l + r) // 2
+        placed = self.place(2 * idx + 1, l, mid, val)
+        if not placed:
+            placed = self.place(2 * idx + 2, mid + 1, r, val)
+        self.seg[idx] = max(self.seg[2 * idx + 1], self.seg[2 * idx + 2])
+        return placed
