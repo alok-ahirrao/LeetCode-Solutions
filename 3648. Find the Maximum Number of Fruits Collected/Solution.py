@@ -1,32 +1,22 @@
-class Solution(object):
-    def maxCollectedFruits(self, grid):
-        n = len(grid)
-        diag = 0
-
-        # Diagonal
+class Solution:
+    def maxCollectedFruits(self, fruits: List[List[int]]) -> int:
+        n = len(fruits)
+        ans = 0
         for i in range(n):
-            diag += grid[i][i]
-        
-        # Bottom left child
-        dp = [[-inf] * (n+1) for _ in range(n+1)] # Padding
-        dp[n-1][0] = grid[n-1][0] # Base case
-        for col in range(1, n): # Dont include start (1, ...)
-            for row in range(col+1, n): # Avoid the diag
-                dp[row][col] = max(
-                    dp[row+1][col-1] + grid[row][col], # Go up
-                    dp[row][col-1] + grid[row][col], # Go mid
-                    dp[row-1][col-1] + grid[row][col] # Go down
-                )
-        
-        # Top right child
-        dp[0][n-1] = grid[0][n-1] # Padding
-        for row in range(1, n): # Dont include start (1, ...)
-            for col in range(row+1, n): # Avoid the diag
-                dp[row][col] = max(
-                    dp[row-1][col-1] + grid[row][col], # Go left down
-                    dp[row-1][col] + grid[row][col], # Go down
-                    dp[row-1][col+1] + grid[row][col] # Go right down
-                )
-        
-        # return diag + left child + right child
-        return diag + dp[n-1][n-2] + dp[n-2][n-1] 
+            ans += fruits[i][i]
+        dp_bottom = [fruits[n-1][0], 0, 0]
+        dp_right = [fruits[0][n-1], 0, 0]
+        max_reachable = 2
+        for i in range(1, n-1):
+            dp_bottom_new = [0]*(max_reachable+2)
+            dp_right_new = [0]*(max_reachable+2)
+            for j in range(max_reachable):
+                dp_bottom_new[j] = max(dp_bottom[j-1], dp_bottom[j], dp_bottom[j+1])+fruits[n-1-j][i]
+                dp_right_new[j] = max(dp_right[j-1], dp_right[j], dp_right[j+1])+fruits[i][n-1-j]
+            dp_bottom = dp_bottom_new
+            dp_right = dp_right_new
+            if max_reachable-n+4+i <= 1:
+                max_reachable += 1
+            elif max_reachable-n+3+i > 1:
+                max_reachable -= 1
+        return ans+dp_right[0]+dp_bottom[0]
