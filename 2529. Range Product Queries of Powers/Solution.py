@@ -1,28 +1,17 @@
+
+
 class Solution:
     def productQueries(self, n: int, queries: List[List[int]]) -> List[int]:
-        mod = 10**9 + 7
-        power = []
-
-        if n & 1:
-            power.append(1)
-        n >>= 1
-        val = 1
+        MOD = 10 ** 9 + 7
+        a = []
         while n:
-            val <<= 1  
-            if n & 1:
-                power.append(val)
-            n >>= 1
-
-        prefix = [1] * len(power)
-        prefix[0] = power[0] % mod
-        for i in range(1, len(power)):
-            prefix[i] = (prefix[i-1] * power[i]) % mod
-
-        res = []
-        for i, j in queries:
-            if i == 0:
-                res.append(prefix[j] % mod)
-            else:
-                inv = pow(prefix[i-1], mod-2, mod)
-                res.append((prefix[j] * inv) % mod)
-        return res
+            lb = n & -n
+            a.append(lb)
+            n ^= lb
+        na = len(a)
+        res = [[0] * na for _ in range(na)]
+        for i, x in enumerate(a):
+            res[i][i] = x
+            for j in range(i + 1, na):
+                res[i][j] = res[i][j - 1] * a[j] % MOD
+        return [res[l][r] for l, r in queries]
