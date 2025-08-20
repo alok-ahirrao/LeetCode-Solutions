@@ -1,19 +1,30 @@
 class Solution:
     def countSquares(self, matrix: List[List[int]]) -> int:
-        if not matrix or not matrix[0]:
-            return 0
+        r = len(matrix)
+        c = len(matrix[0])
+        dp=[[0]*c for _ in range(r)]
 
-        m, n = len(matrix), len(matrix[0])
-        res = 0
+        count=0
 
-        for i in range(m):
-            for j in range(n):
-                if matrix[i][j] == 1 and i > 0 and j > 0:
-                    matrix[i][j] = min(
-                        matrix[i-1][j],
-                        matrix[i][j-1],
-                        matrix[i-1][j-1]
-                    ) + 1
-                res += matrix[i][j]
+        for j in range(c):
+            if(matrix[0][j]==1):
+                dp[0][j]=1
+                count+=1
+        
+        for i in range(1, r):
+            if(matrix[i][0]==1):
+                dp[i][0]=1
+                count+=1
 
-        return res
+        for i in range(1, r):
+            for j in range(1, c):
+                if(matrix[i][j]==0):
+                    continue
+                elif dp[i-1][j]==0 or dp[i-1][j-1]==0 or dp[i][j-1]==0:
+                    dp[i][j]=1
+                else:
+                    dp[i][j] = min(dp[i-1][j], dp[i-1][j-1], dp[i][j-1]) + 1
+                
+                count+=dp[i][j]
+        
+        return count
