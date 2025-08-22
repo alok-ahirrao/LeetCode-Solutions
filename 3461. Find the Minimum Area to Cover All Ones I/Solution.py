@@ -1,19 +1,16 @@
 class Solution:
     def minimumArea(self, grid: List[List[int]]) -> int:
-        l=[0,0]
-        b=[float('inf'),0]
-        f1=True
-        for i in range(len(grid)):
-            if 1 in grid[i]:
-                if f1:
-                    l[0]=i
-                    f1=False
-                l[1]=i
-            else:
-                continue
-            c=grid[i][::-1]
-            b[0]=min(b[0],grid[i].index(1))
-            b[1]=max(b[1],len(grid[i])-c.index(1))
-        l=l[1]-l[0]+1
-        b=b[1]-b[0]
-        return l*b
+        rows = [ row for row in grid ]
+        cols = [ col for col in zip(*grid) ]
+        m = len(rows)
+        n = len(cols)
+
+        minRow, maxRow = 0, m-1
+        while minRow < m and 1 not in rows[minRow]: minRow += 1
+        while maxRow >= 0 and 1 not in rows[maxRow]: maxRow -= 1
+        
+        minCol, maxCol = 0, n-1
+        while minCol < n and 1 not in cols[minCol]: minCol += 1
+        while maxCol >= 0 and 1 not in cols[maxCol]: maxCol -= 1
+
+        return (maxRow - minRow + 1) * (maxCol - minCol + 1)
