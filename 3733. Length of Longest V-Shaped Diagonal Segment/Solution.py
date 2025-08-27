@@ -1,12 +1,5 @@
 class Solution:
     def lenOfVDiagonal(self, grid: List[List[int]]) -> int:
-        # Dynamic Programming
-        # Let dp(x, y, t, d) be the longest segment starting with (x, y) where the segment has been turned or not (indicated by the binary flag t) and the current direction is d.
-        # When grid(x, y) == 1:
-        # dp(x, y, t, *) = max(dp(x', y', true, d) if grid(x', y') == 2, 1)
-        # Otherwise:
-        # dp(x, y, t, d) = max(dp(x', y', t, d) if grid(x',y') == 2 - grid(x, y) else 1, dp(x'', y'', false, d') if d is true and grid(x'',y'') == 2 - grid(x, y))
-        # The overall complexity is O(m * n * 4 * 2) ~ O(2 * 10^6).
         dirs = [(1, 1), (1, -1), (-1, -1), (-1, 1)]
         n = len(grid)
         m = len(grid[0])
