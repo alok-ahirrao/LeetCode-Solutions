@@ -43,4 +43,3 @@ class Solution:
 
 # This line ensures that when the program exits, 
 # it creates/overwrites display_runtime.txt with "0"
-__import__("atexit").register(lambda: open("display_runtime.txt", "w").write("0"))
